@@ -50,7 +50,7 @@ for episodes in range(1, NUM_EPISODES + 1):
     state = np.reshape(state, [1, state_size])
     # Cumulative reward is the return since the beginning of the episode
     cumulative_reward = 0.0
-    for time in range(1, 500):
+    for time in range(1, 201):
         # Render the environment for visualization
         env.render()
         # Select action
@@ -63,11 +63,13 @@ for episodes in range(1, NUM_EPISODES + 1):
         reward = reward_engineering(state[0], action, reward, next_state[0], done)
         state = next_state
         # Accumulate reward
-        cumulative_reward = agent.gamma * cumulative_reward + reward
+        # cumulative_reward = agent.gamma * cumulative_reward + reward
+        cumulative_reward += 1
         if done:
             print("episode: {}/{}, time: {}, score: {:.6}, epsilon: {:.3}"
                   .format(episodes, NUM_EPISODES, time, cumulative_reward, agent.epsilon))
             break
+    print(f"episode {episodes}")
     return_history.append(cumulative_reward)
 
 # Prints mean return
@@ -78,32 +80,33 @@ plt.plot(return_history, 'b')
 plt.xlabel('Episode')
 plt.ylabel('Return')
 plt.savefig('dqn_evaluation.' + fig_format, fig_format=fig_format)
-
-# Plots the greedy policy learned by DQN
-plt.figure()
-position = np.arange(-1.2, 0.5 + 0.025, 0.05)
-velocity = np.arange(-0.07, 0.07 + 0.0025, 0.005)
-push_left = []
-none = []
-push_right = []
-for j in range(len(position)):
-    for k in range(len(velocity)):
-        pos = position[j]
-        vel = velocity[k]
-        state = np.array([[pos, vel]])
-        action = agent.act(state)
-        if action == 0:
-            push_left.append(state[0])
-        elif action == 1:
-            none.append(state[0])
-        else:
-            push_right.append(state[0])
-plot_points(push_left, 'b.')
-plot_points(none, 'r.')
-plot_points(push_right, 'g.')
-plt.xlabel('Position')
-plt.ylabel('Velocity')
-plt.title('Agent Policy')
-plt.legend(['Left', 'None', 'Right'])
-plt.savefig('agent_decision.' + fig_format, format=fig_format)
 plt.show()
+
+# # Plots the greedy policy learned by DQN
+# plt.figure()
+# position = np.arange(-1.2, 0.5 + 0.025, 0.05)
+# velocity = np.arange(-0.07, 0.07 + 0.0025, 0.005)
+# push_left = []
+# none = []
+# push_right = []
+# for j in range(len(position)):
+#     for k in range(len(velocity)):
+#         pos = position[j]
+#         vel = velocity[k]
+#         state = np.array([[pos, vel]])
+#         action = agent.act(state)
+#         if action == 0:
+#             push_left.append(state[0])
+#         elif action == 1:
+#             none.append(state[0])
+#         else:
+#             push_right.append(state[0])
+# plot_points(push_left, 'b.')
+# plot_points(none, 'r.')
+# plot_points(push_right, 'g.')
+# plt.xlabel('Position')
+# plt.ylabel('Velocity')
+# plt.title('Agent Policy')
+# plt.legend(['Left', 'None', 'Right'])
+# plt.savefig('agent_decision.' + fig_format, format=fig_format)
+# plt.show()
