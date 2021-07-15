@@ -1,6 +1,7 @@
-import re
 from math import fabs
 
+LIMIT_ANGLE = 0.418/4
+LIMIT_POSITION = 4.8/4
 
 
 
@@ -26,11 +27,11 @@ def reward_engineering(state, action, reward, next_state, done):
     velocity = state[1]
     angle = state[2]
     angular_velocity = state[3]
-    angular_direction = int(fabs(angle*angular_velocity) >= angle*angular_velocity)
-    direction = int(fabs(position*velocity) >= position*velocity)
+    next_position = next_state[0]
+    next_angle = next_state[1]
 
-    reward = reward - angle**2 + angular_direction*angular_velocity**2 + direction*velocity**2
-    reward = reward + 50 * int(fabs(angle) <= 1e-3 and fabs(position) <= 1e-3)
+    reward = reward - angle**2 - angular_velocity**2 - position**2 - velocity**2
+    reward = reward + 1 + int(fabs(next_angle) <= LIMIT_ANGLE and fabs(next_position) <= LIMIT_POSITION)
 
 
     return reward

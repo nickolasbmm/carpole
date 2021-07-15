@@ -55,8 +55,16 @@ class DQNAgent:
         model.add(layers.Dense(units=24,activation=activations.relu, input_dim = self.state_size ))
         model.add(layers.Dense(units=24,activation=activations.relu))
         model.add(layers.Dense(units=self.action_size,activation=activations.linear))
-
         model.compile(loss=losses.mse, optimizer=optimizers.Adam(lr=self.learning_rate))
+
+        # model.add(layers.Dense(units=24,activation=activations.relu, input_dim = self.state_size ))
+        # model.add(layers.Dense(48, activation='relu'))
+        # model.add(layers.Dense(96, activation='relu'))
+        # model.add(layers.Dense(48, activation='relu'))
+        # model.add(layers.Dense(24, activation='relu'))
+        # model.add(layers.Dense(2,activation='relu'))
+        # model.compile(loss='mse', optimizer=optimizers.Adam(lr=self.learning_rate))
+
         model.summary()
         return model
 
