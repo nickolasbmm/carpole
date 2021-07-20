@@ -3,7 +3,7 @@ import gym
 import numpy as np
 import matplotlib.pyplot as plt
 from dqn_agent import DQNAgent
-from utils import reward_engineering
+from utils import *
 import tensorflow as tf
 
 
@@ -43,7 +43,7 @@ for episodes in range(1, NUM_EPISODES + 1):
     state = np.reshape(state, [1, state_size])
     # Cumulative reward is the return since the beginning of the episode
     cumulative_reward = 0.0
-    for time in range(1, 500):
+    for time in range(TIME_LIMIT):
         if RENDER:
             env.render()  # Render the environment for visualization
         # Select action
@@ -59,7 +59,7 @@ for episodes in range(1, NUM_EPISODES + 1):
         state = next_state
         # Accumulate reward
         cumulative_reward = agent.gamma * cumulative_reward + reward
-        if done:
+        if done or time == (TIME_LIMIT - 1):
             print("episode: {}/{}, time: {}, score: {:.6}, epsilon: {:.3}"
                   .format(episodes, NUM_EPISODES, time, cumulative_reward, agent.epsilon))
             break

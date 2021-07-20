@@ -3,7 +3,7 @@ import gym
 import numpy as np
 import matplotlib.pyplot as plt
 from dqn_agent import DQNAgent
-from utils import reward_engineering
+from utils import *
 import tensorflow as tf
 
 
@@ -50,7 +50,7 @@ for episodes in range(1, NUM_EPISODES + 1):
     state = np.reshape(state, [1, state_size])
     # Cumulative reward is the return since the beginning of the episode
     cumulative_reward = 0.0
-    for time in range(1, 201):
+    for time in range(TIME_LIMIT):
         # Render the environment for visualization
         env.render()
         # Select action
@@ -60,16 +60,15 @@ for episodes in range(1, NUM_EPISODES + 1):
         # Reshaping to keep compatibility with Keras
         next_state = np.reshape(next_state, [1, state_size])
         # Making reward engineering to keep compatibility with how training was done
-        reward = reward_engineering(state[0], action, reward, next_state[0], done)
+        # reward = reward_engineering(state[0], action, reward, next_state[0], done)
         state = next_state
         # Accumulate reward
         # cumulative_reward = agent.gamma * cumulative_reward + reward
-        cumulative_reward += 1
-        if done:
+        cumulative_reward = cumulative_reward + reward
+        if done or time == (TIME_LIMIT - 1):
             print("episode: {}/{}, time: {}, score: {:.6}, epsilon: {:.3}"
                   .format(episodes, NUM_EPISODES, time, cumulative_reward, agent.epsilon))
             break
-    print(f"episode {episodes}")
     return_history.append(cumulative_reward)
 
 # Prints mean return
