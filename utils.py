@@ -2,7 +2,7 @@ from math import fabs
 
 LIMIT_ANGLE = 0.418/4
 LIMIT_POSITION = 4.8/4
-TIME_LIMIT = 300
+TIME_LIMIT = 500
 
 
 def reward_engineering(state, action, reward, next_state, done):

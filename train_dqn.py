@@ -43,6 +43,7 @@ for episodes in range(1, NUM_EPISODES + 1):
     state = np.reshape(state, [1, state_size])
     # Cumulative reward is the return since the beginning of the episode
     cumulative_reward = 0.0
+    time = 0
     for time in range(TIME_LIMIT):
         if RENDER:
             env.render()  # Render the environment for visualization
@@ -53,19 +54,19 @@ for episodes in range(1, NUM_EPISODES + 1):
         # Reshaping to keep compatibility with Keras
         next_state = np.reshape(next_state, [1, state_size])
         # Making reward engineering to allow faster training
-        reward = reward_engineering(state[0], action, reward, next_state[0], done)
+        # reward = reward_engineering(state[0], action, reward, next_state[0], done)
         # Appending this experience to the experience replay buffer
         agent.append_experience(state, action, reward, next_state, done)
         state = next_state
         # Accumulate reward
         cumulative_reward = agent.gamma * cumulative_reward + reward
-        if done or time == (TIME_LIMIT - 1):
-            print("episode: {}/{}, time: {}, score: {:.6}, epsilon: {:.3}"
-                  .format(episodes, NUM_EPISODES, time, cumulative_reward, agent.epsilon))
+        if done:
             break
         # We only update the policy if we already have enough experience in memory
         if len(agent.replay_buffer) > 2 * batch_size:
             loss = agent.replay(batch_size)
+    print("episode: {}/{}, time: {}, score: {:.6}, epsilon: {:.3}"
+                  .format(episodes, NUM_EPISODES, time, cumulative_reward, agent.epsilon))
     return_history.append(cumulative_reward)
     agent.update_epsilon()
     # Every 10 episodes, update the plot for training monitoring
