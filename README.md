@@ -6,3 +6,5 @@ Instruções para uso:
 2. Escolher o tamanho da rede neural e tipo de recompensa em utils.py
 3. Treinar a rede neural executando train_dqn.py
 4. Avaliar o resultado executando evaluate_dqn.py
+
+Enunciado do problema disponível em: https://gym.openai.com/envs/CartPole-v1/
