@@ -4,6 +4,12 @@ LIMIT_ANGLE = 0.418/4
 LIMIT_POSITION = 4.8/4
 TIME_LIMIT = 500
 
+NETWORK_TYPE = 'smaller'
+# NETWORK_TYPE = 'bigger'
+
+# REWARD_TYPE = 'default'
+REWARD_TYPE = 'reward_engineering'
+
 
 def reward_engineering(state, action, reward, next_state, done):
     """
@@ -22,7 +28,6 @@ def reward_engineering(state, action, reward, next_state, done):
     :return: modified reward for faster training.
     :rtype: float.
     """
-    # Todo: implement reward engineering
     position = state[0]
     velocity = state[1]
     angle = state[2]

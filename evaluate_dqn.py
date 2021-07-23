@@ -32,7 +32,7 @@ state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
 # Creating the DQN agent (with greedy policy, suited for evaluation)
-agent = DQNAgent(state_size, action_size, epsilon=0.0, epsilon_min=0.0)
+agent = DQNAgent(state_size, action_size,network_type=NETWORK_TYPE,reward_type=REWARD_TYPE, epsilon=0.0, epsilon_min=0.0)
 
 # Checking if weights from previous learning session exists
 if os.path.exists('cartpole.h5'):
@@ -59,11 +59,8 @@ for episodes in range(1, NUM_EPISODES + 1):
         next_state, reward, done, _ = env.step(action)
         # Reshaping to keep compatibility with Keras
         next_state = np.reshape(next_state, [1, state_size])
-        # Making reward engineering to keep compatibility with how training was done
-        # reward = reward_engineering(state[0], action, reward, next_state[0], done)
         state = next_state
         # Accumulate reward
-        # cumulative_reward = agent.gamma * cumulative_reward + reward
         cumulative_reward = cumulative_reward + reward
         if done or time == (TIME_LIMIT - 1):
             print("episode: {}/{}, time: {}, score: {:.6}, epsilon: {:.3}"
@@ -78,6 +75,7 @@ print('Mean return: ', np.mean(return_history))
 plt.plot(return_history, 'b')
 plt.xlabel('Episode')
 plt.ylabel('Return')
+plt.ylim(ymin=0)
 plt.savefig('dqn_evaluation.' + fig_format, fig_format=fig_format)
 plt.show()
 

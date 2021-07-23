@@ -24,7 +24,7 @@ state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
 # Creating the DQN agent
-agent = DQNAgent(state_size, action_size)
+agent = DQNAgent(state_size, action_size,network_type=NETWORK_TYPE,reward_type=REWARD_TYPE)
 
 # Checking if weights from previous learning session exists
 if os.path.exists('cartpole.h5'):
@@ -35,6 +35,7 @@ else:
 done = False
 batch_size = 32  # batch size used for the experience replay
 return_history = []
+time_history = []
 
 for episodes in range(1, NUM_EPISODES + 1):
     # Reset the environment
@@ -53,13 +54,12 @@ for episodes in range(1, NUM_EPISODES + 1):
         next_state, reward, done, _ = env.step(action)
         # Reshaping to keep compatibility with Keras
         next_state = np.reshape(next_state, [1, state_size])
-        # Making reward engineering to allow faster training
-        # reward = reward_engineering(state[0], action, reward, next_state[0], done)
+        if(agent.reward_type == 'reward_engineering'):
+            reward = reward_engineering(state[0], action, reward, next_state[0], done)
+        cumulative_reward = agent.gamma * cumulative_reward + reward
         # Appending this experience to the experience replay buffer
         agent.append_experience(state, action, reward, next_state, done)
         state = next_state
-        # Accumulate reward
-        cumulative_reward = agent.gamma * cumulative_reward + reward
         if done:
             break
         # We only update the policy if we already have enough experience in memory
@@ -68,15 +68,23 @@ for episodes in range(1, NUM_EPISODES + 1):
     print("episode: {}/{}, time: {}, score: {:.6}, epsilon: {:.3}"
                   .format(episodes, NUM_EPISODES, time, cumulative_reward, agent.epsilon))
     return_history.append(cumulative_reward)
+    time_history.append(time)
     agent.update_epsilon()
     # Every 10 episodes, update the plot for training monitoring
-    if episodes % 20 == 0:
+    if episodes % 10 == 0:
         plt.plot(return_history, 'b')
         plt.xlabel('Episode')
         plt.ylabel('Return')
-        plt.show(block=False)
         plt.pause(0.1)
         plt.savefig('dqn_training.' + fig_format, fig_format=fig_format)
         # Saving the model to disk
         agent.save("cartpole.h5")
+        plt.figure()
+        plt.plot(time_history, 'b')
+        plt.xlabel('Episode')
+        plt.ylabel('Episode Length')
+        plt.savefig('dqn_training_time.' + fig_format, fig_format=fig_format)
+        plt.show(block=False)
+        plt.pause(0.1)
+        plt.close('all')
 plt.pause(1.0)

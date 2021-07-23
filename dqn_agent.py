@@ -8,7 +8,7 @@ class DQNAgent:
     """
     Represents a Deep Q-Networks (DQN) agent.
     """
-    def __init__(self, state_size, action_size, gamma=0.95, epsilon=0.5, epsilon_min=0.01, epsilon_decay=0.98, learning_rate=0.001, buffer_size=4098):
+    def __init__(self, state_size, action_size, network_type,reward_type, gamma=0.95, epsilon=0.5, epsilon_min=0.01, epsilon_decay=0.98, learning_rate=0.001, buffer_size=4098):
         """
         Creates a Deep Q-Networks (DQN) agent.
 
@@ -37,6 +37,8 @@ class DQNAgent:
         self.epsilon_min = epsilon_min
         self.epsilon_decay = epsilon_decay
         self.learning_rate = learning_rate
+        self.network_type = network_type
+        self.reward_type = reward_type
         self.model = self.make_model()
 
     def make_model(self):
@@ -46,24 +48,22 @@ class DQNAgent:
         :return: action-value neural network.
         :rtype: Keras' model.
         """
-        # raise NotImplementedError('You need to implement the neural network model.')  # Remove this line
-        # Todo: Uncomment the lines below
 
         model = models.Sequential()
-        # Todo: implement Keras' model
-
-        model.add(layers.Dense(units=24,activation=activations.relu, input_dim = self.state_size ))
-        model.add(layers.Dense(units=24,activation=activations.relu))
-        model.add(layers.Dense(units=self.action_size,activation=activations.linear))
-        model.compile(loss=losses.mse, optimizer=optimizers.Adam(lr=self.learning_rate))
-
-        # model.add(layers.Dense(units=24,activation=activations.relu, input_dim = self.state_size ))
-        # model.add(layers.Dense(48, activation='relu'))
-        # model.add(layers.Dense(96, activation='relu'))
-        # model.add(layers.Dense(48, activation='relu'))
-        # model.add(layers.Dense(24, activation='relu'))
-        # model.add(layers.Dense(2,activation='relu'))
-        # model.compile(loss='mse', optimizer=optimizers.Adam(lr=self.learning_rate))
+        
+        if(self.network_type == 'smaller'):
+            model.add(layers.Dense(units=24,activation=activations.relu, input_dim = self.state_size ))
+            model.add(layers.Dense(units=24,activation=activations.relu))
+            model.add(layers.Dense(units=self.action_size,activation=activations.linear))
+            model.compile(loss=losses.mse, optimizer=optimizers.Adam(lr=self.learning_rate))
+        else:
+            model.add(layers.Dense(units=24,activation=activations.relu, input_dim = self.state_size ))
+            model.add(layers.Dense(48, activation='relu'))
+            model.add(layers.Dense(96, activation='relu'))
+            model.add(layers.Dense(48, activation='relu'))
+            model.add(layers.Dense(24, activation='relu'))
+            model.add(layers.Dense(2,activation='relu'))
+            model.compile(loss='mse', optimizer=optimizers.Adam(lr=self.learning_rate))
 
         model.summary()
         return model
@@ -77,7 +77,6 @@ class DQNAgent:
         :return: chosen action.
         :rtype: int.
         """
-        # Todo: implement epsilon-greey action selection.
         q = self.model.predict(state)
         p = np.random.uniform(0,1)
 
